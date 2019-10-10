@@ -1,0 +1,69 @@
+# coding=utf-8
+from pykeyboard import PyKeyboard
+from pymouse import PyMouse
+import time
+import pyHook
+import pythoncom
+import xlrd
+import xlwt
+import  pyperclip
+from pynput import mouse,keyboard
+import threading
+import sys
+from openpyxl import Workbook,load_workbook
+import xml.dom.minidom
+import re
+import codecs
+import random
+def copy():
+
+    k.press_key(k.control_l_key)
+    k.tap_key("C")
+    k.release_key(k.control_l_key)
+
+def getCopy(maxTime=3):
+    #maxTime = 3  # 3秒复制 调用copy() 不管结果对错
+    while (maxTime > 0):
+        maxTime = maxTime - 0.5
+        time.sleep(0.5)
+        # print('doing')
+        copy()
+
+    result = pyperclip.paste()
+    return result
+
+def onpressed(Key):
+    while True:
+        #print(Key)
+        if (Key==keyboard.Key.f3):#开始
+            time.sleep(0.5)
+            copy=getCopy(1)
+
+            if(' ' in str(copy)):
+                result_str=str(copy).split(' ')[1]
+                k.type_string(result_str)
+            else:
+                compile='[a-zA-Z0-9-~]{1,}'
+                regex = re.compile(compile)
+                result=regex.findall(copy)
+                if (result!= []):
+                    result_str=''
+                    for i in result:
+                        result_str=result_str+i
+                    k.type_string(result_str)
+
+
+
+        return True
+
+
+
+if __name__ == '__main__':
+    k = PyKeyboard()
+    m = PyMouse()
+
+    print('start ')
+
+
+    with keyboard.Listener(on_press=onpressed) as listener:
+        listener.join()
